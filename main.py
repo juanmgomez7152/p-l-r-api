@@ -3,7 +3,7 @@ from app import api
 
 app = FastAPI()
 
-app.include_router(api.router, prefix="/api")
+app.include_router(api.router, prefix="/rest/api")
 
 @app.get("/")
 def read_root():
