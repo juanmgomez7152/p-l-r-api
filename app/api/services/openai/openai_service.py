@@ -1,9 +1,10 @@
-from app.api.openai.open_ai_conn import openai_call
+from app.api.services.openai.open_ai_conn import openai_call
 import logging
 
 logger = logging.getLogger(__name__)
 with open("app/api/translation/translation_system_message.txt") as f:
     system_message = f.read()
+    
 class OpenAiSession:
     def __init__(self):
         self.history = [{"role": "system", "content": system_message}]
@@ -18,4 +19,5 @@ class OpenAiSession:
     
     def delete_history(self):
         self.history = []
+        self.history = [{"role": "system", "content": system_message}]
         return "History deleted."

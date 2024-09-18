@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 
 
 load_dotenv()
-model_name = "gpt-4-turbo"
+model_name = "gpt-4o-mini"
 # system_message = "You are a helpful assistant"
 # client.api_key = os.getenv("OPENAI_API_KEY")
 # openai.api_key = os.getenv("OPENAI_API_KEY")
@@ -18,7 +18,7 @@ async def openai_call(list_of_messages):
     response = client.chat.completions.create(
       model=model_name,
       messages=list_of_messages,
-      temperature=0.5
+      temperature=0
     )
     
     answer = response.choices[0].message.content

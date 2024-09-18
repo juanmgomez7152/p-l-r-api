@@ -1,1 +1,2 @@
 app/api/openai/.env
+app/api/services/openai/.env
