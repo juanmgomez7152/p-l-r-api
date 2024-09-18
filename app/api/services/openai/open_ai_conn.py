@@ -7,9 +7,6 @@ from dotenv import load_dotenv
 
 load_dotenv()
 model_name = "gpt-4o-mini"
-# system_message = "You are a helpful assistant"
-# client.api_key = os.getenv("OPENAI_API_KEY")
-# openai.api_key = os.getenv("OPENAI_API_KEY")
 client = OpenAI()
 client.api_key = os.getenv("OPENAI_API_KEY")
 
