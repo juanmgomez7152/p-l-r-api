@@ -6,7 +6,7 @@ spec:
   template:
     spec:
       containers:
-        - image: us-central1-docker.pkg.dev/p-l-r-api/p-l-r-fastapi/p-l-r-fastapi
+        - image: us-central1-docker.pkg.dev/p-l-r-api/p-l-r-fastapi/p-l-r-fastapi:latest
           env:
           ports:
             - containerPort: 3000
