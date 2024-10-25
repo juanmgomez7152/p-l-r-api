@@ -7,7 +7,7 @@ app.include_router(api.router, prefix="/rest/api")
 
 @app.get("/")
 def read_root():
-    return {"Hello": "World"}
+    return {"Message": "Ok"}
 
 def run_uvicorn():
     import uvicorn
