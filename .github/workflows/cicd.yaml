@@ -1,9 +1,9 @@
 name: Deploy to Cloud Run
 
 env:
-  SERVICE_NAME: p-l-r-fastapi-service
+  SERVICE_NAME: p-l-r-api-service
   PROJECT_ID: p-l-r-api
-  DOCKER_IMAGE_URL: us-central1-docker.pkg.dev/p-l-r-api/p-l-r-fastapi/p-l-r-fastapi
+  DOCKER_IMAGE_URL: us-central1-docker.pkg.dev/p-l-r-api/p-l-r-api/p-l-r-api
 
 on:
   push:

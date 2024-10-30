@@ -8,17 +8,11 @@ ENV PYTHONUNBUFFERED=1
 # Set the working directory
 WORKDIR /app
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
-    build-essential \
-    libpq-dev \
-    tesseract-ocr \
-    curl \
-    && rm -rf /var/lib/apt/lists/*
-
 # Install Python dependencies
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+RUN python -m venv /opt/venv
+RUN /opt/venv/bin/pip install --no-cache-dir -r requirements.txt
+
 
 # Copy the application code
 COPY . .
@@ -27,4 +21,4 @@ COPY . .
 EXPOSE 3000
 
 # Command to run the application
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "3000"]
+CMD ["/opt/venv/bin/uvicorn", "main:app", "--host", "0.0.0.0", "--port", "3000"]

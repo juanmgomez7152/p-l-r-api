@@ -6,12 +6,12 @@ steps:
         "-f",
         "dockerfile.prod",
         "-t",
-        "us-central1-docker.pkg.dev/p-l-r-api/p-l-r-fastapi/p-l-r-fastapi:latest",
+        "us-central1-docker.pkg.dev/p-l-r-api/p-l-r-api/p-l-r-api:latest",
         ".",
       ]
   - name: "gcr.io/cloud-builders/docker"
     args:
       [
         "push",
-        "us-central1-docker.pkg.dev/p-l-r-api/p-l-r-fastapi/p-l-r-fastapi:latest",
+        "us-central1-docker.pkg.dev/p-l-r-api/p-l-r-api/p-l-r-api:latest",
       ]

@@ -1,12 +1,12 @@
 apiVersion: serving.knative.dev/v1
 kind: Service
 metadata:
-  name: p-l-r-fastapi-service
+  name: p-l-r-api-service
 spec:
   template:
     spec:
       containers:
-        - image: us-central1-docker.pkg.dev/p-l-r-api/p-l-r-fastapi/p-l-r-fastapi:latest
+        - image: us-central1-docker.pkg.dev/p-l-r-api/p-l-r-api/p-l-r-api:latest
           env:
           ports:
             - containerPort: 3000
