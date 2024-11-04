@@ -26,7 +26,6 @@ COPY . .
 
 # Ensure Tesseract is in the PATH
 ENV PATH="/usr/bin/tesseract:${PATH}"
-RUN tesseract --version
 # Expose the port FastAPI is running on
 EXPOSE 3000
 

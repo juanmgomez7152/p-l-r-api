@@ -2,10 +2,14 @@ from PIL import Image
 import pytesseract
 from io import BytesIO
 import logging
+import platform
 
 logger = logging.getLogger(__name__)
-# Specify the Tesseract executable path
-pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
+# Specify the Tesseract executable path based on the operating system
+if platform.system() == "Windows":
+    pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
+else:
+    pytesseract.pytesseract.tesseract_cmd = '/usr/bin/tesseract'
 
 def parse_words_from_image(image_bytes: bytes) -> str:
     """
