@@ -1,10 +1,9 @@
 from openai import OpenAI
 import os
-import tiktoken
-import asyncio
+import logging
 from dotenv import load_dotenv
 
-
+logger = logging.getLogger(__name__)
 load_dotenv()
 model_name = "gpt-4o-mini"
 client = OpenAI()
@@ -25,4 +24,4 @@ async def openai_call(list_of_messages):
     return answer
     
   except Exception as e:
-    print("Error making connection to OpenAI: ", e)
+    logger.error("Error making connection to OpenAI: ", e)

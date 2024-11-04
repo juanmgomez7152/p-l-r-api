@@ -1,7 +1,9 @@
 from PIL import Image
 import pytesseract
 from io import BytesIO
+import logging
 
+logger = logging.getLogger(__name__)
 # Specify the Tesseract executable path
 pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
 
@@ -24,4 +26,4 @@ def parse_words_from_image(image_bytes: bytes) -> str:
         
         return text
     except Exception as e:
-        raise ValueError(f"Error parsing image: {e}")
+        raise logger.error(f"Error parsing image: {e}")

@@ -23,7 +23,7 @@ async def upload_picture(file: UploadFile = File(...)):
     if file.content_type != "image/jpeg":
         raise HTTPException(status_code=400, detail="Invalid file type. Only JPEG images are allowed.")
     
-    print(f"Received image: {file.filename}")
+    logger.info(f"Received image: {file.filename}")
     try:
         # Read the image bytes
         image_bytes = await file.read()
@@ -51,7 +51,7 @@ async def translate_sent_message(request: Request):
 @router.delete("/delete-history")
 def delete_history():
     try:
-        print("History Deleted.")
+        logger.info("History Deleted.")
         answer = openai_session.delete_history()
         return Response(content=json.dumps({"details": "History Deleted."}), status_code=200)
     except Exception as e:
