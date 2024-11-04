@@ -8,21 +8,24 @@ ENV PYTHONUNBUFFERED=1
 # Set the working directory
 WORKDIR /app
 
+# Install system dependencies
 RUN apt-get update && apt-get install -y \
     build-essential \
     libpq-dev \
     tesseract-ocr \
     curl \
     && rm -rf /var/lib/apt/lists/*
-    
+
 # Install Python dependencies
 COPY requirements.txt .
 RUN python -m venv /opt/venv
 RUN /opt/venv/bin/pip install --no-cache-dir -r requirements.txt
 
-
 # Copy the application code
 COPY . .
+
+# Ensure Tesseract is in the PATH
+ENV PATH="/usr/bin/tesseract:${PATH}"
 
 # Expose the port FastAPI is running on
 EXPOSE 3000
