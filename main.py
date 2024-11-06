@@ -1,11 +1,21 @@
 import logging
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from app import api
 
 logger = logging.basicConfig(level=logging.INFO)
 app = FastAPI()
 
 app.include_router(api.router, prefix="/rest/api")
+
+# Add CORS middleware configuration
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["https://p-l-r-ui-service-562328781960.us-east1.run.app"],  # Update with your frontend URL
+    allow_credentials=True,
+    allow_methods=["*"],  # Allows all methods
+    allow_headers=["*"],  # Allows all headers
+)
 
 @app.get("/")
 def read_root():
