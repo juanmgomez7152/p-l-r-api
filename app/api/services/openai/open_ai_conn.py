@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 
 logger = logging.getLogger(__name__)
 load_dotenv()
-model_name = "gpt-4o-mini"
+model_name = "gpt-4o"
 client = OpenAI()
 client.api_key = os.getenv("OPENAI_API_KEY")
 
@@ -18,6 +18,7 @@ async def openai_call(list_of_messages):
     )
     
     answer = response.choices[0].message.content
+    print(f"Answer: {answer}")
     
     list_of_messages.append({"role": response.choices[0].message.role, "content": answer})
     
