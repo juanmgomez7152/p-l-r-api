@@ -14,8 +14,7 @@ class OpenAiSession:
         self.history.append({"role": "user", "content": message})
         try:
             language_detected = detect(message)
-            print(f"Language detected: {language_detected}")
-            if detect(message) == "es":
+            if language_detected == "es":
                 answer =  "El mensaje ya está en español, no es necesario traducirlo."
             else:
                 answer = await openai_call(self.history)

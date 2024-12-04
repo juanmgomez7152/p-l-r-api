@@ -29,7 +29,7 @@ async def upload_picture(file: UploadFile = File(...)):
         image_bytes = await file.read()
         
         # Parse words from the image
-        extracted_text = parse_words_from_image(image_bytes)
+        extracted_text = await parse_words_from_image(image_bytes)
         return json.dumps({"extracted_text": extracted_text})
     except Exception as e:
         logger.error(f"Error parsing image: {e}")
@@ -49,10 +49,10 @@ async def translate_sent_message(request: Request):
         raise HTTPException(status_code=500, detail="Error translating message")
     
 @router.delete("/delete-history")
-def delete_history():
+async def delete_history():
     try:
         logger.info("History Deleted.")
-        answer = openai_session.delete_history()
+        openai_session.delete_history()
         return Response(content=json.dumps({"details": "History Deleted."}), status_code=200)
     except Exception as e:
         logger.error(f"Error: {e}")
