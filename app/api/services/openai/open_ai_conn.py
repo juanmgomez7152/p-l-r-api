@@ -18,7 +18,6 @@ async def openai_call(list_of_messages, model_name=model_name):
     )
     
     answer = response.choices[0].message.content
-    print(f"Answer: {answer}")
     
     list_of_messages.append({"role": response.choices[0].message.role, "content": answer})
     
