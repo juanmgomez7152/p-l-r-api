@@ -2,6 +2,9 @@ import logging
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app import api
+from app.db.test_duckdb_service import populate_users_table, list_tables
+
+populate_users_table()#TEST
 
 logger = logging.basicConfig(level=logging.INFO)
 app = FastAPI()
@@ -11,7 +14,8 @@ app.include_router(api.router, prefix="/rest/api")
 # Add CORS middleware configuration
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://p-l-r-ui-service-562328781960.us-east1.run.app","https://paramiguel.org"], # Update with your frontend URL
+    # allow_origins=["https://p-l-r-ui-service-562328781960.us-east1.run.app","https://paramiguel.org"], # Update with your frontend URL
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],  # Allows all methods
     allow_headers=["*"],  # Allows all headers
