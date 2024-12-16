@@ -2,4 +2,4 @@ app/api/openai/.env
 app/api/services/openai/.env
 .env
 .venv
-
+app/db/test
