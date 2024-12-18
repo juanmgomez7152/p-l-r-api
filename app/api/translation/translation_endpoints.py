@@ -20,9 +20,6 @@ async def upload_picture(file: UploadFile = File(...)):
     if not file:
         raise HTTPException(status_code=400, detail="No file provided")
     
-    if file.content_type != "image/jpeg":
-        raise HTTPException(status_code=400, detail="Invalid file type. Only JPEG images are allowed.")
-    
     logger.info(f"Received image: {file.filename}")
     try:
         # Read the image bytes

@@ -1,5 +1,4 @@
 from fastapi import APIRouter, HTTPException, Request, UploadFile, File, Response
-import asyncio
 import json
 import logging
 from app.db.test.test_duckdb_service import insert_user, verify_email_exist, verify_password
