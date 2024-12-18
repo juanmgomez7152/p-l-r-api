@@ -1,9 +1,12 @@
-from PIL import Image
 import pytesseract
-from io import BytesIO
 import logging
 import platform
+import asyncio
+from concurrent.futures import ThreadPoolExecutor
+from PIL import Image
+from io import BytesIO
 
+executor = ThreadPoolExecutor()
 logger = logging.getLogger(__name__)
 # Specify the Tesseract executable path based on the operating system
 if platform.system() == "Windows":
@@ -11,23 +14,16 @@ if platform.system() == "Windows":
 else:
     pytesseract.pytesseract.tesseract_cmd = '/usr/bin/tesseract'
 
-def parse_words_from_image(image_bytes: bytes) -> str:
-    """
-    Parses words from a .jpg image file.
-
-    Args:
-        image_bytes (bytes): The bytes of the .jpg image file.
-
-    Returns:
-        str: The extracted text from the image.
-    """
+async def parse_words_from_image(image_bytes: bytes) -> str:
     try:
         # Open the image file from bytes
         img = Image.open(BytesIO(image_bytes))
-        
         # Use pytesseract to do OCR on the image
         text = pytesseract.image_to_string(img)
         
+        loop = asyncio.get_event_loop()
+        text = await loop.run_in_executor(executor, parse_words_from_image, image_bytes)
         return text
+    
     except Exception as e:
         raise logger.error(f"Error parsing image: {e}")

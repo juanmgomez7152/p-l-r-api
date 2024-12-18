@@ -13,8 +13,11 @@ def test_session():
         if user_message == "n":
             bool = False
             break
+        elif user_message == "trash":
+            history = [{"role": "system", "content": system_message}]
+            continue
         history.append({"role": "user", "content": user_message})
         answer = asyncio.run(openai_call(history,"gpt-4o"))
-        print(f"AI Answer: {answer}")
+        print(f"AI Answer: {answer}\n")
         
 test_session()
