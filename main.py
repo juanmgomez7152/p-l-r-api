@@ -2,9 +2,7 @@ import logging
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app import api
-from app.db.test_duckdb_service import populate_users_table, list_tables
 
-populate_users_table()#TEST
 
 logger = logging.basicConfig(level=logging.INFO)
 app = FastAPI()
