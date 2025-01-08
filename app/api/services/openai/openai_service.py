@@ -3,20 +3,21 @@ from langdetect import detect
 from cachetools import TTLCache
 import logging
 
-cache = TTLCache(maxsize=100, ttl=300)
 logger = logging.getLogger(__name__)
 
 with open("app/api/translation/translation_system_message.txt") as f:
     system_message = f.read()
     
 class OpenAiSession:
+    cache = TTLCache(maxsize=100, ttl=300)
     def __init__(self):
         self.history = [{"role": "system", "content": system_message}]
         
     async def send_message(self, message):
-        if message in cache:
-            return cache[message]
+        if message in self.cache:
+            return self.cache[message]
         self.history.append({"role": "user", "content": message})
+        
         try:
             language_detected = detect(message)
             if language_detected == "es":
@@ -24,7 +25,7 @@ class OpenAiSession:
             else:
                 answer = await openai_call(self.history)
                 
-            cache[message] = answer
+            self.cache[message] = answer
             return answer
         except Exception as e:
             logger.error(f"Error detecting language: {e}")
