@@ -22,6 +22,8 @@ async def hello():
 @router.get("/languages")
 async def get_languages():
     try:
+        system_message = origin_system_message.replace("{Hispanic_Country}", "Mexico")
+        openai_session.set_system_message(system_message)
         return json.dumps({"languages": languages})
     except Exception as e:
         logger.error(f"Error: {e}")
@@ -36,6 +38,7 @@ async def set_language(request: Request):
             raise HTTPException(status_code=400, detail="Language not supported")
         
         system_message = origin_system_message.replace("{Hispanic_Country}", language)
+        logger.info(f"Language set to {language}")
         openai_session.set_system_message(system_message)
         return json.dumps({"details": f"Language set to {language}"})
     except Exception as e:
