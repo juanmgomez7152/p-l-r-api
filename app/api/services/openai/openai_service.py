@@ -16,6 +16,7 @@ class OpenAiSession:
     
     def set_system_message(self, system_message):
         self.system_message = system_message
+        self.cache.clear()
         # self.history = [{"role": "system", "content": system_message}]
         return "System message set."
     
