@@ -1,4 +1,5 @@
 from fastapi import APIRouter, HTTPException, Request, UploadFile, File, Response
+from fastapi.responses import StreamingResponse
 import asyncio
 import json
 import logging
@@ -74,8 +75,27 @@ async def translate_sent_message(request: Request):
 
         return json.dumps({"answer": answer})
     except Exception as e:
-        logger.error(f"Error: {e}")
+        logger.error(f"Error sending the response: {e}")
         raise HTTPException(status_code=500, detail="Error translating message")
+    
+@router.post("/stream-message/")
+async def stream_translation(request:Request):
+    json_data = await request.json()
+    logger.info(f"Streaming message: {json_data}")
+    message = json_data["message"]
+    
+    try:
+        async def event_stream(message):
+            async for chunk in await openai_session.stream_message(message):
+                if chunk:
+                    logger.info(f"Chunk: {chunk}")
+                    yield chunk
+
+        return StreamingResponse(event_stream(message), media_type="text/event-stream",headers={"Cache-Control": "no-cache","Connection": "keep-alive"})
+    except Exception as e:
+        logger.error(f"Error Streaming the Response: {e}")
+        raise HTTPException(status_code=500, detail="Error translating message")
+    
     
 # @router.delete("/delete-history")
 # async def delete_history():

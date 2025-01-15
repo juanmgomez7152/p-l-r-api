@@ -1,4 +1,4 @@
-from app.api.services.openai.open_ai_conn import openai_call
+from app.api.services.openai.open_ai_conn import openai_call, stream_openai_call
 from langdetect import detect
 from cachetools import TTLCache
 import logging
@@ -38,7 +38,16 @@ class OpenAiSession:
         except Exception as e:
             logger.error(f"Error detecting language: {e}")
             return "Lenguaje no detectado."
-    
+    async def stream_message(self,message):
+            payload = [{"role": "system", "content": self.system_message},
+                        {"role": "user", "content": message}]
+            try:
+                return stream_openai_call(payload)
+            except Exception as e:
+                logger.error(f"STREAM: Error detecting language: {e}")
+                return "Lenguaje no detectado."
+            
+            
     # def delete_history(self):
     #     self.history = []
     #     self.history = [{"role": "system", "content": self.system_message}]

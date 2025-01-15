@@ -23,3 +23,18 @@ async def openai_call(messages, model_name=model_name):
     
   except Exception as e:
     logger.error("Error making connection to OpenAI: ", e)
+    
+async def stream_openai_call(messages, model_name=model_name):
+  try:
+    response = client.chat.completions.create(
+      model=model_name,
+      messages=messages,
+      temperature=0,
+      stream=True
+    )
+    
+    for chunk in response:
+      yield chunk.choices[0].delta.content
+    
+  except Exception as e:
+    logger.error("Error making connection to OpenAI: ", e)
