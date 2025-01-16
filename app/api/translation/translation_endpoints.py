@@ -88,7 +88,7 @@ async def stream_translation(request:Request):
         async def event_stream(message):
             async for chunk in await openai_session.stream_message(message):
                 if chunk:
-                    logger.info(f"Chunk: {chunk}")
+                    # logger.info(f"Chunk: {chunk}")
                     yield chunk
 
         return StreamingResponse(event_stream(message), media_type="text/event-stream",headers={"Cache-Control": "no-cache","Connection": "keep-alive"})
