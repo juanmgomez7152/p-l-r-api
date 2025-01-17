@@ -24,6 +24,17 @@ class OpenAiSession:
         # self.history = [{"role": "system", "content": system_message}]
         return "System message set."
     
+    async def _openai_audio_call(self, message, model_name=model_name):
+        try:
+            response = client.audio.speech.create(
+                model="tts-1",
+                voice='ash',
+                input=message,
+            )
+            
+        except Exception as e:
+            logger.error("Error making connection to OpenAI: ", e)
+    
     async def _openai_call(self, messages, model_name=model_name):
         try:
             response = client.chat.completions.create(
@@ -65,6 +76,8 @@ class OpenAiSession:
                 answer = await self._openai_call(payload)
                 
             self.cache[message] = answer
+            # audio_response = await self._openai_audio_call(answer)
+            # return answer,audio_response
             return answer
         except Exception as e:
             logger.error(f"Error detecting language: {e}")

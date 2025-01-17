@@ -4,7 +4,7 @@ import asyncio
 import json
 import logging
 from app.api.services.openai.openai_service import OpenAiSession
-from app.api.services.image_parser.image_parser_service import parse_words_from_image
+from app.api.services.image_parser.image_parser_service import parse_image_using_easyocr
 
 router = APIRouter(tags=["Translation"])
 
@@ -53,13 +53,14 @@ async def upload_picture(file: UploadFile = File(...)):
     if not file:
         raise HTTPException(status_code=400, detail="No file provided")
     
-    logger.info(f"Received image: {file.filename}")
+    logger.info(f"Received image '{file.filename}'")
     try:
         # Read the image bytes
         image_bytes = await file.read()
         
+        extracted_text=await parse_image_using_easyocr(image_bytes)
         # Parse words from the image
-        extracted_text = await parse_words_from_image(image_bytes)
+        # extracted_text = await parse_words_from_image(image_bytes)
         return json.dumps({"extracted_text": extracted_text})
     except Exception as e:
         logger.error(f"Error parsing image: {e}")
@@ -71,8 +72,11 @@ async def translate_sent_message(request: Request):
 
     message = json_data["message"]
     try:
+        # answer,audio_response = await openai_session.send_message(message)
         answer = await openai_session.send_message(message)
 
+        # return json.dumps({"answer": answer,
+        #                    "audio_response": audio_response})
         return json.dumps({"answer": answer})
     except Exception as e:
         logger.error(f"Error sending the response: {e}")
