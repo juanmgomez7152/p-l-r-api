@@ -53,7 +53,7 @@ async def upload_picture(file: UploadFile = File(...)):
     if not file:
         raise HTTPException(status_code=400, detail="No file provided")
     
-    logger.info(f"Received image '{file.filename}'")
+    logger.info(f"Processing image '{file.filename}'...")
     try:
         # Read the image bytes
         image_bytes = await file.read()
