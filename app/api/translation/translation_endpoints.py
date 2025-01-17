@@ -4,7 +4,7 @@ import asyncio
 import json
 import logging
 from app.api.services.openai.openai_service import OpenAiSession
-from app.api.services.image_parser_service import parse_words_from_image
+from app.api.services.image_parser.image_parser_service import parse_words_from_image
 
 router = APIRouter(tags=["Translation"])
 
