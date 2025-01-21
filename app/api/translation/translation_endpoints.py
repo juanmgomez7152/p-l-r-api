@@ -4,7 +4,7 @@ import asyncio
 import json
 import logging
 from app.api.services.openai.openai_service import OpenAiSession
-from app.api.services.image_parser.image_parser_service import parse_image_using_easyocr
+from app.api.services.image_parser.image_parser_service import ImageParserSession
 
 router = APIRouter(tags=["Translation"])
 
@@ -15,7 +15,7 @@ with open("app/api/translation/translation_system_message.txt") as f:
 with open("app/resources/list of latin american countries.txt", "r") as f:
     languages = f.read().splitlines()
 openai_session = OpenAiSession(origin_system_message.replace("{Hispanic_Country}", "Mexico"))
-
+image_parser = ImageParserSession()
 @router.get("/hello")
 async def hello():
     return {"message": "Hello, World!"}
@@ -58,9 +58,7 @@ async def upload_picture(file: UploadFile = File(...)):
         # Read the image bytes
         image_bytes = await file.read()
         
-        extracted_text=await parse_image_using_easyocr(image_bytes)
-        # Parse words from the image
-        # extracted_text = await parse_words_from_image(image_bytes)
+        extracted_text=await image_parser.parse_image_using_easyocr(file.filename,image_bytes)
         return json.dumps({"extracted_text": extracted_text})
     except Exception as e:
         logger.error(f"Error parsing image: {e}")
