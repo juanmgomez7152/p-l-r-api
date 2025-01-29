@@ -1,9 +1,11 @@
 from langdetect import detect
+from app.nested_ttl_cache import NestedTTLCache
 from cachetools import TTLCache
 from openai import OpenAI
 from dotenv import load_dotenv
 import os
 import logging
+from typing import Dict
 
 logger = logging.getLogger(__name__)
 
@@ -11,18 +13,14 @@ load_dotenv()
 model_name = "gpt-4o"
 client = OpenAI()
 client.api_key = os.getenv("OPENAI_API_KEY")
+system_messages: Dict[str, str] = {}
+with open("app/api/translation/translation_system_message.txt") as f:
+    origin_system_message = f.read()   
     
 class OpenAiSession:
-    cache = TTLCache(maxsize=100, ttl=300)
-    def __init__(self,system_message):
-        self.system_message = system_message
-        # self.history = [{"role": "system", "content": system_message}]
-    
-    def set_system_message(self, system_message):
-        self.system_message = system_message
-        self.cache.clear()
-        # self.history = [{"role": "system", "content": system_message}]
-        return "System message set."
+    def __init__(self):
+        self.nested_cache = NestedTTLCache(maxsize=100, ttl=300)
+        self.cache = TTLCache(maxsize=100, ttl=300)
     
     async def _openai_audio_call(self, message, model_name=model_name):
         try:
@@ -47,6 +45,7 @@ class OpenAiSession:
             return answer
         except Exception as e:
             logger.error("Error making connection to OpenAI: ", e)
+            
     async def _stream_openai_call(self, messages, model_name=model_name):
         try:
             response = client.chat.completions.create(
@@ -62,26 +61,32 @@ class OpenAiSession:
         except Exception as e:
             logger.error("Error making connection to OpenAI: ", e)
     
-    async def send_message(self, message):
-        if message in self.cache:
-            return self.cache[message]
-        payload = [{"role": "system", "content": self.system_message},
-                    {"role": "user", "content": message}]
-        
+    async def get_translation(self, message, country=None, language_id=None, language=None):
+
         try:
+            if message in self.nested_cache[country]:
+                logger.debug(f"Cache hit for {message} in {country}")
+                return self.nested_cache[country][message]
+    
+            if country not in system_messages:
+                system_message = origin_system_message.replace("{Hispanic_Country}", country).replace("{Language}", language)
+                system_messages[country] = system_message
+                logger.info(f"Stored system message for {country}")
+                
+            payload = [{"role": "system", "content": system_messages[country]},
+            {"role": "user", "content": message}]
             language_detected = detect(message)
-            if language_detected == "es":
+            if language_detected == language_id:
                 answer =  "El mensaje ya está en español, no es necesario traducirlo."
             else:
                 answer = await self._openai_call(payload)
                 
-            self.cache[message] = answer
-            # audio_response = await self._openai_audio_call(answer)
-            # return answer,audio_response
+            self.nested_cache[country][message]=answer
+            
             return answer
         except Exception as e:
             logger.error(f"Error detecting language: {e}")
-            return "Lenguaje no detectado."
+            return "Lenguaje no detectado."      
         
     async def stream_message(self,message):
             payload = [{"role": "system", "content": self.system_message},
@@ -91,9 +96,3 @@ class OpenAiSession:
             except Exception as e:
                 logger.error(f"STREAM: Error detecting language: {e}")
                 return "Lenguaje no detectado."
-            
-            
-    # def delete_history(self):
-    #     self.history = []
-    #     self.history = [{"role": "system", "content": self.system_message}]
-    #     return "History deleted."
