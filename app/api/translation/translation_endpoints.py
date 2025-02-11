@@ -62,9 +62,10 @@ async def translate_sent_message(request: Request):
     try:
         message = json_data["message"]
         country = json_data["language"]
+        retry = json_data["retry"]
         language_id=country_to_languageid[country]
         language = country_to_language[country]
-        answer = await openai_session.get_translation(message,country=country,language_id=language_id,language=language)
+        answer = await openai_session.get_translation(retry,message,country=country,language_id=language_id,language=language)
 
         return json.dumps({"answer": answer})
     except Exception as e:

@@ -61,20 +61,24 @@ class OpenAiSession:
         except Exception as e:
             logger.error("Error making connection to OpenAI: ", e)
     
-    async def get_translation(self, message, country=None, language_id=None, language=None):
+    async def get_translation(self,retry, message, country=None, language_id=None, language=None):
 
         try:
-            if message in self.nested_cache[country]:
+            if message in self.nested_cache[country] and not retry:# Cache hit for the country languge and message
                 logger.debug(f"Cache hit for {message} in {country}")
                 return self.nested_cache[country][message]
-    
-            if country not in system_messages:
+            elif message in self.nested_cache[country]:
+                logger.info("Retrying the same call")
+            if country not in system_messages: # Cache miss for the country language system message
                 system_message = origin_system_message.replace("{Hispanic_Country}", country).replace("{Language}", language)
                 system_messages[country] = system_message
-                logger.info(f"Stored system message for {country}")
                 
-            payload = [{"role": "system", "content": system_messages[country]},
-            {"role": "user", "content": message}]
+            query = f"""
+            Translate the input_message.
+            Input_message: {message}
+            """
+            payload = [{"role": "assistant", "content": system_messages[country]},
+            {"role": "user", "content": query}]
             language_detected = detect(message)
             if language_detected == language_id:
                 answer =  "El mensaje ya está en español, no es necesario traducirlo."
