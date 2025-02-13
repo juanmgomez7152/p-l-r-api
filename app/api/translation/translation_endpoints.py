@@ -23,6 +23,7 @@ with open("app/resources/list of latin american countries.txt", "r") as f:
         language = languages[i].strip().split(" ")[2]
         # Languages - used for the dropdown in the frontend
         languages[i] = country
+        languages[i] = (country, language)
         # Mapping country to language id for the language_detect comparision
         country_to_languageid[country] = language_id
         # Mapping country to language for the system message
