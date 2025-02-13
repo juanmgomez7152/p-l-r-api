@@ -12,8 +12,8 @@ app.include_router(api.router, prefix="/rest/api")
 # Add CORS middleware configuration
 app.add_middleware(
     CORSMiddleware,
-    # allow_origins=["https://p-l-r-ui-service-562328781960.us-east1.run.app","https://paramiguel.org"], # Update with your frontend URL
-    allow_origins=["*"],
+    allow_origins=["https://p-l-r-ui-service-562328781960.us-east1.run.app","https://paramiguel.org","http://localhost:4200/"], # Update with your frontend URL
+    # allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],  # Allows all methods
     allow_headers=["*"],  # Allows all headers
