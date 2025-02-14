@@ -15,6 +15,8 @@ app.add_middleware(
     allow_origins=["https://p-l-r-ui-service-562328781960.us-east1.run.app",
                    "https://paramiguel.org",
                    "http://localhost:4200",
+                   "https://www.paramiguel.org",
+                   "*"
                    ], # Update with your frontend URL
     # allow_origins=["*"],
     allow_credentials=True,
