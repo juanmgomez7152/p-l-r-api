@@ -20,7 +20,7 @@ app.add_middleware(
                    ], # Update with your frontend URL
     # allow_origins=["*"],
     allow_credentials=True,
-    allow_methods=["*"],  # Allows all methods
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],  # Allows all headers
     expose_headers=["*"]
 )
