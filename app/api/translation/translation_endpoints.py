@@ -1,6 +1,4 @@
-from fastapi import APIRouter, HTTPException, Request, UploadFile, File, Response
-from fastapi.responses import StreamingResponse,JSONResponse
-import asyncio
+from fastapi import APIRouter, HTTPException, Request, UploadFile, File
 import json
 import logging
 from typing import Dict
@@ -52,19 +50,8 @@ async def upload_picture(file: UploadFile = File(...)):
         image_bytes = await file.read()
         
         extracted_text=await image_parser.parse_image_using_easyocr(file.filename,image_bytes)
-        response = JSONResponse(
-            content={"extracted_text": extracted_text}
-        )
-        
-        # Add specific CORS headers
-        response.headers.update({
-            "Access-Control-Allow-Origin": "https://paramiguel.org",
-            "Access-Control-Allow-Credentials": "true",
-            "Access-Control-Allow-Methods": "POST, OPTIONS",
-            "Access-Control-Allow-Headers": "Origin, Content-Type, Accept"
-        })
-        
-        return response
+        return json.dumps({"extracted_text": extracted_text})
+
     except Exception as e:
         logger.error(f"Error parsing image: {e}")
         raise HTTPException(status_code=500, detail="Error parsing image")
