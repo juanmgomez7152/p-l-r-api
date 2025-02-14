@@ -4,6 +4,7 @@ from PIL import Image
 from io import BytesIO
 from typing import Optional
 import easyocr
+import numpy as np
 from cachetools import TTLCache
 
 reader = easyocr.Reader(['en'])
@@ -19,7 +20,8 @@ class ImageParserSession:
             return self.cache[filename]
         try:
             img = Image.open(BytesIO(image_bytes))
-            result = reader.readtext(image=img)
+            img_array = np.array(img)
+            result = reader.readtext(image=img_array)
             extracted_text = ""
             for (bbox, text, prob) in result:
                 # logger.info(f"Detected text: {text}, with probability: {prob}")
