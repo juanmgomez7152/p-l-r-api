@@ -34,6 +34,7 @@ image_parser = ImageParserSession()
 
 @router.get("/languages")
 async def get_languages():
+    logger.info("Getting languages...")
     try:
         return json.dumps({"languages": languages})
     except Exception as e:
@@ -70,6 +71,7 @@ async def upload_picture(file: UploadFile = File(...)):
 
 @router.post("/send-message/")
 async def translate_sent_message(request: Request):
+    logger.info("Translating message...")
     json_data = await request.json()
     
     try:
