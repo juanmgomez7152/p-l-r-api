@@ -81,7 +81,8 @@ async def turn_text_to_speech(request: Request):
     
     try:
         message = json_data["message"]
-        mp3 = await openai_session._openai_audio_call(message)
+        country = json_data["language"]
+        mp3 = await openai_session._openai_audio_call(message,country)
         
         # Get the binary content from the OpenAI response
         audio_content = mp3.content

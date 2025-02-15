@@ -20,15 +20,24 @@ with open("app/api/translation/translation_system_message.txt") as f:
 class OpenAiSession:
     def __init__(self):
         self.nested_cache = NestedTTLCache(maxsize=100, ttl=300)
-        self.cache = TTLCache(maxsize=100, ttl=300)
+        self.nested_audio_cache = NestedTTLCache(maxsize=100, ttl=300)
     
-    async def _openai_audio_call(self, message):
+    async def _openai_audio_call(self, message,country):
         try:
+            """
+                This function is used to convert the text to audio using OpenAI's TTS API.
+                The nested_audio_cache is used to store the audio files for the country and language.
+                but sometimes the openai API fails to return the full audio file, so more debugging is needed.
+            """
+            # if message in self.nested_audio_cache[country]:# Cache hit for the country languge and message
+            #     logger.info(f"AUDIO Cache hit")
+            #     return self.nested_audio_cache[country][message]
             mp3 = client.audio.speech.create(
                 model="tts-1",
                 voice='ash',
                 input=message,
             )
+            self.nested_audio_cache[country][message]=mp3
             return mp3
         except Exception as e:
             logger.error("Error making connection to OpenAI: ", e)
@@ -65,7 +74,7 @@ class OpenAiSession:
 
         try:
             if message in self.nested_cache[country] and not retry:# Cache hit for the country languge and message
-                logger.debug(f"Cache hit for {message} in {country}")
+                logger.info(f"MESSAGE Cache hit")
                 return self.nested_cache[country][message]
             elif message in self.nested_cache[country]:
                 logger.info("Retrying the same call")
