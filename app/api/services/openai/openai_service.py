@@ -22,14 +22,14 @@ class OpenAiSession:
         self.nested_cache = NestedTTLCache(maxsize=100, ttl=300)
         self.cache = TTLCache(maxsize=100, ttl=300)
     
-    async def _openai_audio_call(self, message, model_name=model_name):
+    async def _openai_audio_call(self, message):
         try:
-            response = client.audio.speech.create(
+            mp3 = client.audio.speech.create(
                 model="tts-1",
                 voice='ash',
                 input=message,
             )
-            
+            return mp3
         except Exception as e:
             logger.error("Error making connection to OpenAI: ", e)
     
