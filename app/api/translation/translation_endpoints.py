@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Request, UploadFile, File
+from fastapi import APIRouter, HTTPException, Request, UploadFile, File, Response
 import json
 import logging
 from typing import Dict
@@ -73,21 +73,29 @@ async def translate_sent_message(request: Request):
     except Exception as e:
         logger.error(f"Error sending the response: {e}")
         raise HTTPException(status_code=500, detail="Error translating message")
-    
-# @router.post("/stream-message/")
-# async def stream_translation(request:Request):
-#     json_data = await request.json()
-#     logger.info(f"Streaming message: {json_data}")
-#     message = json_data["message"]
-    
-#     try:
-#         async def event_stream(message):
-#             async for chunk in await openai_session.stream_message(message):
-#                 if chunk:
-#                     # logger.info(f"Chunk: {chunk}")
-#                     yield chunk
 
-#         return StreamingResponse(event_stream(message), media_type="text/event-stream",headers={"Cache-Control": "no-cache","Connection": "keep-alive"})
-#     except Exception as e:
-#         logger.error(f"Error Streaming the Response: {e}")
-#         raise HTTPException(status_code=500, detail="Error translating message")
+@router.post("/turn-text-to-speech/")
+async def turn_text_to_speech(request: Request):
+    logger.info("Turning text to speech...")
+    json_data = await request.json()
+    
+    try:
+        message = json_data["message"]
+        country = json_data["language"]
+        mp3 = await openai_session._openai_audio_call(message,country)
+        
+        # Get the binary content from the OpenAI response
+        audio_content = mp3.content
+        
+        # Return a Response object with the proper headers
+        return Response(
+            content=audio_content,
+            media_type="audio/mpeg",
+            headers={
+                "Content-Disposition": "attachment; filename=speech.mp3"
+            }
+        )
+    except Exception as e:
+        logger.error(f"Error turning text to speech: {e}")
+        raise HTTPException(status_code=500, detail="Error turning text to speech")
+
