@@ -49,7 +49,7 @@ async def upload_picture(file: UploadFile = File(...)):
         # Read the image bytes
         image_bytes = await file.read()
         
-        extracted_text=await image_parser.parse_image_using_easyocr(file.filename,image_bytes)
+        extracted_text=await image_parser.parse_image(file.filename,image_bytes)
         return json.dumps({"extracted_text": extracted_text})
 
     except Exception as e:
