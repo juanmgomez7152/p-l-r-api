@@ -29,9 +29,6 @@ class OpenAiSession:
                 The nested_audio_cache is used to store the audio files for the country and language.
                 but sometimes the openai API fails to return the full audio file, so more debugging is needed.
             """
-            # if message in self.nested_audio_cache[country]:# Cache hit for the country languge and message
-            #     logger.info(f"AUDIO Cache hit")
-            #     return self.nested_audio_cache[country][message]
             mp3 = client.audio.speech.create(
                 model="tts-1",
                 voice='ash',
@@ -79,7 +76,7 @@ class OpenAiSession:
             elif message in self.nested_cache[country]:
                 logger.info("Retrying the same call")
             if country not in system_messages: # Cache miss for the country language system message
-                system_message = origin_system_message.replace("{Hispanic_Country}", country).replace("{Language}", language)
+                system_message = origin_system_message.replace("{Country}", country).replace("{Language}", language)
                 system_messages[country] = system_message
                 
             query = f"""

@@ -10,34 +10,16 @@ router = APIRouter(tags=["Translation"])
 logger = logging.getLogger(__name__)
 country_to_languageid:  Dict[str, str] ={}
 country_to_language: Dict[str, str] ={}
-with open("app/api/translation/translation_system_message.txt") as f:
-    origin_system_message = f.read()    
-with open("app/resources/list of latin american countries.txt", "r") as f:
-    languages = f.read().splitlines()
-    for i in range(len(languages)):
-        country = languages[i].strip().split(" ")[0]
-        country = country.replace("_", " ")
-        language_id = languages[i].strip().split(" ")[1]
-        language = languages[i].strip().split(" ")[2]
-        # Languages - used for the dropdown in the frontend
-        languages[i] = country
-        languages[i] = (country, language)
-        # Mapping country to language id for the language_detect comparision
-        country_to_languageid[country] = language_id
-        # Mapping country to language for the system message
-        country_to_language[country] = language
+with open("app/resources/countries_supported.json", "r") as f:
+    countries = json.load(f)
+    for language, data in countries.items():
+        for lang_id, country_list in data.items():
+            for country in country_list:
+                country_to_languageid[country] = lang_id
+                country_to_language[country] = language
     
 openai_session = OpenAiSession()
 image_parser = ImageParserSession()
-
-@router.get("/languages")
-async def get_languages():
-    logger.info("Getting languages...")
-    try:
-        return json.dumps({"languages": languages})
-    except Exception as e:
-        logger.error(f"Error: {e}")
-        raise HTTPException(status_code=500, detail="Error getting languages")
 
 @router.post("/upload-picture/")
 async def upload_picture(file: UploadFile = File(...)):
@@ -64,12 +46,18 @@ async def translate_sent_message(request: Request):
     try:
         message = json_data["message"]
         country = json_data["language"]
+        #verify is the country is supported:
+        if country not in country_to_languageid:
+            raise ValueError(f"Country '{country}' not supported")
         retry = json_data["retry"]
         language_id=country_to_languageid[country]
         language = country_to_language[country]
         answer = await openai_session.get_translation(retry,message,country=country,language_id=language_id,language=language)
 
         return json.dumps({"answer": answer})
+    except ValueError as ve:
+        logger.error(f"ValueError: {ve}")
+        raise HTTPException(status_code=400, detail=str(ve))
     except Exception as e:
         logger.error(f"Error sending the response: {e}")
         raise HTTPException(status_code=500, detail="Error translating message")
@@ -98,4 +86,7 @@ async def turn_text_to_speech(request: Request):
     except Exception as e:
         logger.error(f"Error turning text to speech: {e}")
         raise HTTPException(status_code=500, detail="Error turning text to speech")
+    except ValueError as ve:
+        logger.error(f"ValueError: {ve}")
+        raise HTTPException(status_code=400, detail="Language not supported")
 
